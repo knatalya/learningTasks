@@ -1,2 +1,2 @@
 # learningTasks
-Обучающие задачки
+Обучающие задачки по PHP, JS, Bitrix.
