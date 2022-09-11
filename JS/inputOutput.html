@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа</title>
+</head>
+<body>
+    <p>Поле ввода: <input type="text" id="in" name="input_field" /></p>
+    <p>Поле вывода: <input type="text" id="out" name="output_field"/></p>
+    <input type="submit" value="Скопировать" onclick="copy()" />
+</body>
+<script>
+    function copy(){
+        document.getElementById("out").value = document.getElementById("in").value;
+        document.getElementById("in").value = "";
+    }
+</script>
+</html>

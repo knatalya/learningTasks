@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа</title>
+</head>
+<body>
+    <p>Введите текст: <input type="text" id="in" name="input_field" /></p>
+    <input type="submit" value="Вывести" onclick="output()" />
+    <p id="out"></p>
+</body>
+<script>
+    function output() {
+        let str = document.getElementById("in").value;
+        let result = str.split('').join(' ')
+        document.getElementById("out").innerText = result;
+    }
+</script>
+</html>

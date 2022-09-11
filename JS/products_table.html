@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body>* {
+            margin-bottom: 0.5rem;
+        }
+        thead {
+            background-color: antiquewhite;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px 15px;
+            border: 1px solid black;
+        }
+    </style>
+    <title>Таблица товаров</title>
+</head>
+<body>
+    <form action="">
+        <label for="price_from">Цена от: </label><input type="text" placeholder="0" name="price_from" id="price_from" />
+        <label for="price_to">до: </label><input type="text" placeholder="10000" name="price_to" id="price_to" />
+        <input type="button" value="Обновить" id="load_orders" />
+    </form>
+    <table id="table">
+        <thead id="table_head"></thead>
+        <tbody id="table_body"></tbody>
+    </table>
+    <p id="message"></p>
+<script>
+load_orders.onclick = function(event) {
+    const url = 'https://exercise.develop.maximaster.ru/service/products/';
+    var price_from = document.getElementById('price_from').value;
+    var price_to = document.getElementById('price_to').value;
+    var table_body =  document.getElementById('table_body');
+    var table = document.getElementById("table");
+    document.getElementById("message").style.color = 'red';
+    document.getElementById('message').innerHTML = "";
+    document.getElementById('table_head').innerHTML = "";
+    var rowCount = table.rows.length;
+    for (var x=rowCount-1; x>=0; x--) {
+        table.deleteRow(x);
+    }
+    var filter = 0;
+    fetch(url)
+    .then((resp) => resp.json())
+    .then(function(data) {
+        let i = 0;
+        if (price_to < price_from || price_to<0 || price_from<0) {
+            document.getElementById('message').innerHTML = "Некорректные введные данные!";
+        } else {
+            while(i < data.length) {
+            if ((price_from == null && price_to == null) || (data[i].price > price_from && data[i].price < price_to) || (price_from == null && data[i].price < price_to) || (data[i].price > price_from && price_to == null) || (price_from == 0 && price_to == 0)) {
+                filter = filter + 1;
+                if (filter == 1) {
+                    var tr_head = document.createElement("tr");
+                    tr_head.innerHTML = '<th>ID</th><th>Название</th><th>Количество</th><th>Цена за единицу</th><th>Сумма</th>';
+                    table_head.appendChild(tr_head);
+                }
+                var tr_body = document.createElement("tr");
+                tr_body.innerHTML = '<td>' + (i+1) + '</td>' + '<td>' + data[i].name + '</td>' + '<td>' + data[i].quantity + '</td>' + '<td>' + data[i].price + '</td>' + '<td>' + (data[i].price * data[i].quantity)  + '</td>';
+                table_body.appendChild(tr_body);
+            }
+            i = i + 1;
+            }
+            if(filter == 0) {
+                document.getElementById('message').innerHTML = "Нет данных, попадающих под условие фильтра!";
+            }
+        }
+    })
+    .catch(function(error) {
+        console.log(error);
+    });
+}
+</script>
+</body>
+</html>

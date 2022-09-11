@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Случайный цвет</title>
+    <style>
+        #square {
+            border: 1px solid black;
+            border-radius: 20%;
+            height: 100px;
+            width: 100px;
+        }
+        form>div {
+            margin-bottom: 1rem;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            width: 16rem;
+            border-bottom: 1px solid black;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <form action="">
+        <div>
+            <label for="width">Ширина: </label>
+            <input type="number" name="width" placeholder="110" id="width"/>
+        </div>
+        <div>
+            <label for="height">Высота: </label>
+            <input type="number" name="height" placeholder="100" id="height" />
+        </div>
+        <div>
+            <input type="button" value="Случайный цвет" id="random_color">
+        </div>
+    </form>
+    <div id="square">
+
+    </div>
+<script>
+    function getRandomColor() {
+        r = Math.floor(Math.random() * (256)),
+        g = Math.floor(Math.random() * (256)),
+        b = Math.floor(Math.random() * (256)),
+        color = '#' + r.toString(16) + g.toString(16) + b.toString(16);
+        return color;
+    }
+    width.onchange  = function(event) {
+        var width = document.getElementById('width').value;
+        document.getElementById('square').style.width =  width + 'px';
+    }
+    height.onchange  = function(event) {
+        var height = document.getElementById('height').value;
+        document.getElementById('square').style.height =  height + 'px';
+    }
+    random_color.onclick = function(event) {
+        document.getElementById('square').style.background =  getRandomColor();
+    }
+</script>
+</body>
+</html>

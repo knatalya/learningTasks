@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body>* {
+            margin-bottom: 0.5rem;
+        }
+        table {
+            border-collapse: collapse;
+        }
+        td {
+            height: 1.5rem;
+            width: 3rem;
+            padding: 0.25rem;
+            border: 1px solid black;
+        }
+        input {
+            border: 0;
+            outline: none;
+        }
+    </style>
+    <title>Электронная таблица</title>
+</head>
+<body>
+    <div>
+        <button type="button" id="add_column">Добавить колонку</button>
+        <button type="button" id="remove_column">Удалить колонку</button>
+        <button type="button" id="add_row">Добавить строку</button>
+        <button type="button" id="remove_row">Удалить строку</button>
+    </div>
+    <table id="table">
+        <tbody id="table_body">
+            <tr id="help">
+                <td><input type="text" id="k1" onchange="localSave(event);" ></td>
+                <td><input type="text" id="k2" onchange="localSave(event);"></td>
+                <td><input type="text" id="k3" onchange="localSave(event);"></td>
+            </tr>
+        </tbody>
+    </table>
+<script>
+
+    function localSave (event) {
+        localStorage.setItem(event.target.id, document.getElementById(event.target.id).value);
+        var localValue = localStorage.getItem(event.target.id);
+        console.log(localValue);
+    }
+
+    var i = 10;
+    var table_body =  document.getElementById('table_body');
+    var table = document.getElementById("table");
+
+    for(var k=1; k<4; k++) {
+        document.getElementById("k"+ k +"").value = localStorage.getItem("k"+ k +"") ?? "";
+    }
+    var tr_body = document.createElement("tr");
+    tr_body.innerHTML = '<td><input type="text" id="k4" onchange="localSave(event);" value="'+(localStorage.getItem("k4") ?? "") +'"></td><td><input type="text" id="k5" onchange="localSave(event);" value="'+(localStorage.getItem("k5") ?? "") +'"></td><td><input type="text" id="k6" onchange="localSave(event);" value="'+(localStorage.getItem("k6") ?? "") +'"></td>';
+    table_body.appendChild(tr_body);    
+    var tr_body = document.createElement("tr");
+    tr_body.innerHTML = '<td><input type="text" id="k7" onchange="localSave(event);" value="'+(localStorage.getItem("k7") ?? "") +'"></td><td><input type="text" id="k8" onchange="localSave(event);" value="'+(localStorage.getItem("k8") ?? "") +'"></td><td><input type="text" id="k9" onchange="localSave(event);" value="'+(localStorage.getItem("k9") ?? "") +'"></td>';
+    table_body.appendChild(tr_body);
+
+    add_row.onclick = function(event) {
+        var tr_body = document.createElement("tr");
+        let trs = document.querySelectorAll('#help td');
+        for (let tr of trs) {
+            tr_body.innerHTML += '<td><input type="text" id="k'+ i +'" onchange="localSave(event);" value="'+(localStorage.getItem("k"+ i +"") ?? "") +'"></td>';
+            i++;
+        }
+        table_body.appendChild(tr_body);
+    }
+
+    remove_row.onclick = function(event) {
+        var rowCount = table.rows.length;
+        var bool = 0;
+        if(rowCount > 1) {
+            for (var j = 0; j < table.rows[table.rows.length - 1].cells.length; j++) {
+                if(localStorage.getItem(table.rows[table.rows.length - 1].cells[j].querySelector("input").id)) {
+                    bool++;
+                }
+            }
+            if (bool > 0) {
+                const ok = confirm("В удаляемой строке есть сохраненные данные! Вы всё равно хотите удалить строку?");
+                if(ok) {
+                    for (var j = 0; j < table.rows[table.rows.length - 1].cells.length; j++) {
+                        localStorage.removeItem(table.rows[table.rows.length - 1].cells[j].querySelector("input").id);
+                    }
+                    table.deleteRow(rowCount-1);
+                }
+            } else {
+                table.deleteRow(rowCount-1);
+            }
+
+        } else {
+            alert("Единственную строку удалять нельзя!");
+        }
+
+    }
+
+    add_column.onclick = function(event) {
+        let trs = document.querySelectorAll('#table tr');
+        for (let tr of trs) {
+            let td = document.createElement('td');
+            td.innerHTML += '<input type="text" id="k'+ i +'" onchange="localSave(event);" value="'+(localStorage.getItem("k"+i+"") ?? "") +'">';
+            tr.appendChild(td);
+            i++;
+        }
+    }
+
+    remove_column.onclick = function(event) {
+        var rowCount = table.rows.length;
+        var bool = 0;
+        if(table.rows[0].cells.length > 1) {
+            for (var i = 0; i < rowCount; i++) {
+                if(localStorage.getItem(table.rows[i].cells[table.rows[i].cells.length - 1].querySelector("input").id)) {
+                    bool++;
+                }
+            } 
+            if(bool > 0) {
+                    const ok = confirm("В удаляемой колонке есть сохраненные данные! Вы всё равно хотите удалить колонку?");
+                    if(ok) {
+                        for (var i = 0; i < rowCount; i++) {
+                            localStorage.removeItem(table.rows[i].cells[table.rows[i].cells.length - 1].querySelector("input").id);
+                            table.rows[i].deleteCell(-1);
+                        }
+                    }
+            } else {
+                for (var i = 0; i < rowCount; i++) {
+                    table.rows[i].deleteCell(-1);
+                }
+            }
+        } else {
+            alert("Единственный столбец удалять нельзя!");
+        }
+
+    }
+</script>
+</body>
+</html>

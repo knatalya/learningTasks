@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=7f685f18-3cf1-4cb9-9bd0-0979f633042a&lang=ru_RU" type="text/javascript"></script>
+    <title>Оформление заказа</title>
+    <style>
+        form>* {
+            margin-bottom: 0.5rem;
+            width: 100%;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            width: 24rem;
+        }
+        #map {
+            height: 16rem
+        }
+    </style>
+</head>
+<body>
+    <form action="">
+        <input type="text" id="fio" placeholder="ФИО" />
+        <input type="tel" id="tel" placeholder="Телефон" />
+        <input type="email" id="email" placeholder="Email" />
+        <div id="map"></div>
+        <textarea name="comment" id="comment" cols="30" rows="10" placeholder="Комментарий к заказу (макс. 500 символов)"></textarea>
+        <input type="button" value="Отправить" id="send_order"/>
+        <p id="message"></p>
+    </form>
+    <script type="text/javascript">
+        ymaps.ready(init);
+        var myMap;
+        var mark = false;
+        function init () {
+            myMap = new ymaps.Map("map", {
+                center: [55.76, 37.64], 
+                zoom: 7
+            }, {
+                balloonMaxWidth: 200,
+                searchControlProvider: 'yandex#search'
+            });
+            myPlacemark = new ymaps.Placemark();
+            myMap.events.add('click', function (e) {
+                if (!myMap.balloon.isOpen()) {
+                    var coords = e.get('coords');
+                    myPlacemark.geometry.setCoordinates(e.get('coords'));
+                    myMap.geoObjects.add(myPlacemark);
+                    mark = true;
+                    myMap.balloon.open(coords, {
+                        contentBody:
+                            '<p>Координаты щелчка: ' + [
+                            coords[0].toPrecision(6),
+                            coords[1].toPrecision(6)
+                            ].join(', ') + '</p>',
+                    });
+                }
+                else {
+                    myMap.balloon.close();
+                }
+            });
+        }
+        send_order.onclick = function(event) {
+        let fio = document.getElementById("fio").value;
+        let tel = document.getElementById("tel").value;
+        let email = document.getElementById("email").value;
+        var comment = document.getElementById("comment").value;
+        var numbers = /^-?[0-9]+$/;
+        var valid = true;
+        if (fio == "") {
+            document.getElementById("message").innerHTML += "Не введено ФИО! <br />";
+            valid = false;
+        }
+        if (tel == "") {
+            document.getElementById("message").innerHTML += "Не введен номер телефона! <br />";
+            valid = false;
+        }
+        if (!numbers.test(tel)) {
+            document.getElementById("message").innerHTML += "Телефон должен содержать только числа! <br />";
+            valid = false;
+        }
+        if (email.indexOf("@") == -1) {
+            document.getElementById("message").innerHTML += "Почта должна содержать символ (@)! <br />";
+            valid = false;
+        }
+        if (comment.length > 500) {
+            document.getElementById("message").innerHTML += "Слишком большой комментарий (макс. 500 символов)! <br />";
+            valid = false;
+        }
+        if (!mark) {
+            document.getElementById("message").innerHTML += "Не отмечен адрес доставки! <br />";
+            valid = false;
+        }
+        if (valid) {
+            document.getElementById("message").style.color = 'green';
+            document.getElementById("message").innerHTML = "Заказ оформлен!";
+        } else {
+            document.getElementById("message").style.color = 'red';
+        }
+    }
+    </script>
+</body>
+</html>
